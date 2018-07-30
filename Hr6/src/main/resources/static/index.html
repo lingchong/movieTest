@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style media="screen">
+* {
+	margin: 0;
+	padding: 0;
+}
+
+header {
+	padding: 1em 0;
+	text-align: center;
+	background-color: #69c;
+	color: #fff;
+	font-size: 300%;
+}
+
+header span {
+	font-size: 50%;
+	margin-left: 1em;
+	color: #eee;
+}
+
+footer {
+	position: absolute;
+	bottom: 0;
+	padding: 2em 0;
+	text-align: center;
+	background-color: #69c;
+	color: #fff;
+	width: 100%;
+	clear: both;
+}
+
+.content {
+	width: 75%;
+	overflow: auto;
+	float: right;
+	min-height: 300px;
+}
+
+.nav {
+	float: left;
+	background-color: #eee;
+	width: 25%;
+	position: fixed;
+	height: 100%;
+	overflow: auto;
+}
+
+ul {
+	list-style-type: none;
+	margin-top: 1em;
+}
+
+li a {
+	display: block;
+	color: #000;
+	padding: 8px 0 8px 16px;
+	text-decoration: none;
+}
+
+li a:hover {
+	background-color: #69c;
+	color: white;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 2m auto;
+}
+
+th, td {
+	text-align: left;
+	padding: 8px;
+}
+
+tr:nth-child(even) {
+	background-color: #cfc;
+}
+
+.btn {
+	padding: 0.5em 2em;
+	color: red;
+	background-color: #eee;
+}
+</style>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  </head>
+  <body>
+      <div class="jumbotron p-2">
+          <h1 class="display-3">人力资源管理</h1>
+          <p class="lead">在线编辑t</p>
+          <hr class="my-2">
+          <p>More info</p>
+      </div>
+   <div class="container">
+      <div class="row">
+          <div class="col-lg-4">
+            <a href="#"  style="font-size:30px">员工信息</a><br></br>
+            <a href="#"  style="font-size:30px">在线编辑</a><br></br>
+            <a href="#"  style="font-size:30px">其他    </a><br></br>
+          </div>
+          <div class="col-lg-8">
+              <table class="table">
+                      <tr id ="table1">
+                          <th>id</th>
+                          <th>name</th>
+                          <th>email</th>
+                          <th>phone</th>
+                          <th>job</th>
+                          <th>dept</th>
+                          <th>编辑</th>
+                          <th>删除</th>
+                      </tr>
+                  
+              </table>
+          </div>
+      </div>
+   </div>
+      <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.js"></script>
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+     <script>
+         $(function(){
+           $.ajax({                                                                                                                                                                                                             
+               method:"GET",
+               url:"staff",
+               data:''
+           }).done(function(data){
+               let tb = $("#table");
+               let tr = $("#table1");
+               for(let s of data){
+               let btn = $("button").append("编辑").addClass("btn").
+               on("click",function(){
+                   $.ajax({
+                       url:"staff/"+s.id,
+                       method:"GET",
+                       data:  {id:s.id,info:"edit"}
+                   })
+                   .done((data)=>{
+                       editid = $('<input>').val(s.id);
+                let td1 =$('<td>').append(editid);
+               let td2 = $("<td>").append($("<input>").val(s.name));
+               let td3 = $("<td>").append($("<input>").val(s.email));
+               let td4 = $("<td>").append($("<input>").val(s.phone));
+               let td5 = $("<td>").append($("<input>").val(s.job));
+                let td6 = $("<td>").append($("<input>").val(s.dept));
+                tr.after($("<tr>").append(td1).append(td2).append(td3).append(td4).append(td5).append(td6)
+                .append($("<td").append
+                ( $("button").append("保存").on("click",()=>{
+                    alert("save!");
+                    $.ajax({
+                        url:"staff/"+s.id,
+                        method:"PUT",
+                        data:{
+                            id:editid.val(),
+                            name:'',
+                            email:'',
+                            phone:'',
+                            job:'研发',
+                            dept:2
+                        }
+                    }).done(
+                        function(){
+                            tr.show();
+                            tr.next().remove();
+                        }
+                    )
+                    .fail(function(){
+                        console.log("failed");
+                    })
+                }))
+                )
+                   );
+
+               });
+               let btnRemove = $('<button>').text('删除').on('click', function() {
+			    			//alert('remove ' + s.id);
+			    			
+			    			$.ajax({
+			    				method: 'DELETE',
+			    				url: 'staff/' + s.id
+			    			}).done(function(res) {
+			    				// 从页面删除
+			    				console.log(res);
+			    				tr.remove()
+			    			});
+			    			
+			    		});
+			    		
+               
+  
+                tr.after($("<tr>").append('<td>'+s.id+'</td>')
+			    			.append('<td>'+s.name+'</td>')
+			    			.append('<td>'+s.email+'</td>')
+			    			.append('<td>'+s.phone+'</td>')
+			    			.append('<td>'+s.job+'</td>')
+			    			.append('<td>'+s.dept+'</td>')
+                            .append(btn)
+                            .append(btnRemove));
+                tb.append(tr);
+                
+
+           })
+           .fail(()=>{
+               console.log("failed");
+           })
+           }
+         });
+         })
+
+     </script> 
+</body>
+</html>
